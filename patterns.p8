@@ -47,19 +47,9 @@ function _init()
 		grid_dim.width,
 		grid_dim.height,
 		function(col,row)
-			-- return (x+y-2) % 16 --flr(rnd(16))
-			-- return flr(rnd(15))
-			-- return (col+row-2) / 2 / (grid_dim.height-1)
 			return rnd()
 		end
 	)
-	-- printh(#grid)
-	-- printh(flr(128/(grid_dim.width-1))-1)
-end
-
-function aaa ()
-
-
 end
 
  function inner(f00, f10, f01, f11, x, y) 
