@@ -30,10 +30,10 @@ end
 
 function make_grid(width, height, f)
 	local grid = {}
-	for x=1,width do
-		grid[x] ={}
-		for y=1,height do
-			grid[x][y] = f(x,y)
+	for col=1,width do
+		grid[col] ={}
+		for row=1,height do
+			grid[col][row] = f(col,row)
 		end
 	end
 	return grid
@@ -41,18 +41,20 @@ end
 
 
 function _init()
-	grid_dim = {width = 2, height = 2}
+	grid_dim = {width = 5, height = 5}
 	
 	grid = make_grid(
 		grid_dim.width,
 		grid_dim.height,
-		function(x,y)
+		function(col,row)
 			-- return (x+y-2) % 16 --flr(rnd(16))
-			return flr(rnd(16))
+			-- return flr(rnd(15))
+			-- return (col+row-2) / 2 / (grid_dim.height-1)
+			return rnd()
 		end
 	)
 	-- printh(#grid)
-	printh(flr(128/(grid_dim.width-1))-1)
+	-- printh(flr(128/(grid_dim.width-1))-1)
 end
 
 function aaa ()
@@ -60,54 +62,38 @@ function aaa ()
 
 end
 
+ function inner(f00, f10, f01, f11, x, y) 
+	local un_x = 1.0 - x
+	local un_y = 1.0 - y
+	return (f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y);
+end
+
+drawn_once = false
+
 function _draw() 
-	cls(7)
+	if (drawn_once) then
+		return
+	end
+	drawn_once = true
+	cls()
 
+	local inner_range_row = flr(128/(grid_dim.height-1))-1
+	local inner_range_col = flr(128/(grid_dim.width-1))-1
 
-	-- for x =0,127 do
-	-- 	for y=0,127 do
-	-- 		local v = round((lerp(0,15, x/127) + lerp(0,15, y/127))/2)
-	-- 		pset(x,y,v)
-	-- 	end
-	-- end
-
-	for qx = 2, grid_dim.width do
-		for qy= 2, grid_dim.height do
+	for q_col = 2, grid_dim.width do
+		for q_row= 2, grid_dim.height do
 			local points = {
-				{ grid[qx-1][qy-1], grid[qx][qy-1] },
-				{ grid[qx-1][qy],grid[qx][qy]},
-				-- {grid[qx-1][qy-1], grid[qx][qy-1]}
+				{ grid[q_col-1][q_row-1], grid[q_col-1][q_row] },
+				{ grid[q_col][q_row-1],   grid[q_col][q_row]   }
 			}
-			for x = 0,flr(128/(grid_dim.width-1))-1 do
-				for y = 0,flr(128/(grid_dim.height-1))-1 do
-					local x_norm = x / 7
-					local y_norm = y / 7
-					local v = 0
-					v += points[1][1] * (1 - x_norm)
-					v += points[2][1] * x_norm * (1 - y_norm)
-					v += points[1][2] * (1 - x_norm) * y_norm
-					v += points[2][2] * x_norm * y_norm
-					v = round(v)
-					-- if (v < 0 or v > 15) then
-					-- 	printh(v .. " " .. x .. " " .. y)
-					-- end
-					-- local v = round(
-					-- 	(
-					-- 		lerp(points[1][1],points[2][1], x/7) +
-					-- 		lerp(points[1][2],points[2][2], y/7)
-					-- 	)
-					-- /2)
-					
-
-					pset((qx-2) * flr(128/(grid_dim.width-1)) + x, (qy-2) * flr(128/(grid_dim.height-1)) + y, v)
+			for col = 0, inner_range_col do
+				for row = 0,inner_range_row do
+					local row_norm = row / inner_range_row
+					local col_norm = col / inner_range_col
+					local v = flr(inner(points[1][1], points[2][1], points[1][2], points[2][2], col_norm, row_norm) * 15)
+					pset((q_col-2) * flr(128/(grid_dim.width-1)) + col,(q_row-2) * flr(128/(grid_dim.height-1)) + row, v)
 				end
 			end
-
 		end
 	end
-	-- for x = 1, #grid do
-	-- 	for y = 1, #grid[x] do
-	-- 		pset((x-1) * 8, (y-1) * 8, flr(grid[x][y] * 15))
-	-- 	end
-	-- end
 end
