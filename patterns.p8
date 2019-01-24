@@ -41,7 +41,7 @@ end
 
 
 function _init()
-	grid_dim = {width = 16, height = 16}
+	grid_dim = {width = 17, height = 17}
 	
 	grid = make_grid(
 		grid_dim.width,
@@ -50,16 +50,13 @@ function _init()
 			return flr(rnd(16))
 		end
 	)
-	printh(#grid)
+	-- printh(#grid)
+	printh(flr(128/(grid_dim.width-1))-1)
 end
 
 function _draw() 
-	cls(0)
-	-- for x = 1, #grid do
-	-- 	for y = 1, #grid[x] do
-	-- 		pset((x-1) * 8, (y-1) * 8, flr(grid[x][y] * 15))
-	-- 	end
-	-- end
+	cls(7)
+
 
 	-- for x =0,127 do
 	-- 	for y=0,127 do
@@ -73,14 +70,20 @@ function _draw()
 			local points = {
 				{grid[qx-1][qy-1], grid[qx][qy-1]},
 				{grid[qx-1][qy], grid[qx][qy]},
+				-- {grid[qx-1][qy-1], grid[qx][qy-1]}
 			}
-			for x = 0,flr(128/grid_dim.width)-1 do
-				for y = 0,flr(128/grid_dim.height)-1 do
+			for x = 0,flr(128/(grid_dim.width-1))-1 do
+				for y = 0,flr(128/(grid_dim.height-1))-1 do
 					local v = round((lerp(points[1][1],points[2][1], x/7) + lerp(points[1][2],points[2][2], y/7))/2)
-					pset((qx-2) * flr(128/grid_dim.width) + x, (qy-2) * flr(128/grid_dim.height) + y, v)
+					pset((qx-2) * flr(128/(grid_dim.width-1)) + x, (qy-2) * flr(128/(grid_dim.height-1)) + y, v)
 				end
 			end
 
 		end
 	end
+	-- for x = 1, #grid do
+	-- 	for y = 1, #grid[x] do
+	-- 		pset((x-1) * 8, (y-1) * 8, flr(grid[x][y] * 15))
+	-- 	end
+	-- end
 end
