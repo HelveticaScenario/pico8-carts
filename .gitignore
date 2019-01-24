@@ -1,2 +1,5 @@
 .DS_Store
 demos
+log.txt
+config.txt
+sdl_controllers.txt
