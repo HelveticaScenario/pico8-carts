@@ -39,9 +39,17 @@ function make_grid(width, height, f)
 	return grid
 end
 
+ function inner(f00, f10, f01, f11, x, y) 
+	local un_x = 1.0 - x
+	local un_y = 1.0 - y
+	return (f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y);
+end
+
 
 function _init()
-	grid_dim = {width = 5, height = 5}
+	grid_dim_min = {width = 2, height = 2}
+	grid_dim_max = {width = 33, height = 33}
+	grid_dim = {width = 9, height = 9}
 	
 	grid = make_grid(
 		grid_dim.width,
@@ -50,21 +58,47 @@ function _init()
 			return rnd()
 		end
 	)
+
+	needs_draw = true
 end
 
- function inner(f00, f10, f01, f11, x, y) 
-	local un_x = 1.0 - x
-	local un_y = 1.0 - y
-	return (f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y);
-end
 
-drawn_once = false
+function _update()
+
+	if (btnp(4)) then
+		needs_draw = true
+		grid = make_grid(
+		grid_dim.width,
+		grid_dim.height,
+		function(col,row)
+			return rnd()
+		end
+	)
+	end
+
+	if (btnp(0)) then grid_dim.width-=1 end
+	if (btnp(1)) then grid_dim.width+=1 end
+	if (btnp(2)) then grid_dim.height-=1  end
+	if (btnp(3)) then grid_dim.height+=1  end
+
+
+	if (grid_dim.width < grid_dim_min.width) then
+		grid_dim.width = grid_dim_min.width
+	end
+	if (grid_dim.height < grid_dim_min.height) then
+		grid_dim.height = grid_dim_min.height
+	end
+	if (grid_dim.width > grid_dim_max.width) then
+		grid_dim.width = grid_dim_max.width
+	end
+	if (grid_dim.height > grid_dim_max.height) then
+		grid_dim.height = grid_dim_max.height
+	end
+
+end
 
 function _draw() 
-	if (drawn_once) then
-		return
-	end
-	drawn_once = true
+
 	cls()
 
 	local inner_range_row = flr(128/(grid_dim.height-1))-1
