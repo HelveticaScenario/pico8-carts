@@ -72,7 +72,7 @@ function _init()
 
 end
 
-radius = 1
+radius = 3
 func = circ
 
 change_by = 0.005
