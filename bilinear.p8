@@ -68,6 +68,7 @@ function _init()
 			return rnd()
 		end
 	)
+	
 
 end
 
@@ -129,8 +130,19 @@ function _update()
 
 end
 e = 0
+has_video = false
+has_started = false
+first_frame = true
 function _draw() 
+	local _e = wrap(e)
+	-- if (_e < e and has_video == false) then
+	-- 	extcmd "video"
+	-- 	has_video = true
+	-- end
+	e = _e
+
 	cls()
+	
 
 	local inner_range_row = flr(32/(grid_dim.height-1))-1
 	local inner_range_col = flr(32/(grid_dim.width-1))-1
@@ -167,8 +179,14 @@ function _draw()
 			end
 		end
 	end
+	-- if (has_started == false and first_frame == false) then
+	-- 	extcmd "rec"
+	-- 	has_started = true
+	-- end
+	-- first_frame = false
 	e += change_by
-	e = wrap(e)
+	
+
 	-- rectfill(1,1, 9,7,7)
 	-- print(stat(7), 2,2, 0)
 end
