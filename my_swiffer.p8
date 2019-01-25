@@ -196,7 +196,10 @@ function draw_square(coord, off, dim)
 
 	if (cell_val ~= true and cell_val ~= 0 and exposed) then
 		print(cell_val, off[1]+ 1, off[2] +1, 0)
-
+	elseif (cell_val == true and exposed) then
+		print("*", off[1]+ 1, off[2] +1, 0)
+	elseif (flag == true) then
+		print("F", off[1]+ 1, off[2] +1, 0)
 	end
 	--[[
 	pset(
