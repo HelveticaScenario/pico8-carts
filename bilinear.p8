@@ -72,29 +72,39 @@ function _init()
 
 end
 
+radius = 1
+func = circ
+
 change_by = 0.005
 function _update()
 	local needs_draw
 	if (btnp(4)) then
 		needs_draw = true
+		if (rnd() > 0.5) then
+			func = circ
+		else
+			func = circfill
+		end
+		radius = round(rnd(2) + 1)
+	
 	end
 
 	if (btnp(0)) then
-		grid_dim.width-=1
-		grid_dim.height-=1
-		grid_dim.width*=2
-		grid_dim.height*=2
-		grid_dim.width+=1
-		grid_dim.height+=1
+		-- grid_dim.width-=1
+		-- grid_dim.height-=1
+		-- grid_dim.width = ((grid_dim.width - 1) * 2) +  1
+		-- grid_dim.height = ((grid_dim.height - 1) * 2) +  1
+		-- grid_dim.width+=1
+		-- grid_dim.height+=1
 		needs_draw = true
 	end
 	if (btnp(1)) then
-		grid_dim.width-=1
-		grid_dim.height-=1
-		grid_dim.width/=2
-		grid_dim.height/=2
-		grid_dim.width+=1
-		grid_dim.height+=1
+		-- grid_dim.width-=1
+		-- grid_dim.height-=1
+		-- grid_dim.width = ((grid_dim.width - 1) / 2) +  1
+		-- grid_dim.height = ((grid_dim.height - 1) / 2) +  1
+		-- grid_dim.width+=1
+		-- grid_dim.height+=1
 		needs_draw = true
 	end
 	if (btnp(2)) then
@@ -159,7 +169,7 @@ function _draw()
 					local col_norm = col / inner_range_col
 					local v = inner(points[1][1], points[2][1], points[1][2], points[2][2], col_norm, row_norm)
 					v = round(wrap(v + e) * 15)
-					circfill(
+					func(
 						(
 							(q_col-2) *
 							inner_range_col +
@@ -172,7 +182,7 @@ function _draw()
 							1 +
 							row
 						) * 4,
-						1,
+						radius,
 						v
 					)
 				end
@@ -187,6 +197,6 @@ function _draw()
 	e += change_by
 	
 
-	-- rectfill(1,1, 9,7,7)
-	-- print(stat(7), 2,2, 0)
+	-- rectfill(1,1, 40,7,7)
+	-- print(inner_range_row .. " " .. inner_range_col .. " " .. grid_dim.height .. " " .. grid_dim.width .. " ", 2,2, 0)
 end
