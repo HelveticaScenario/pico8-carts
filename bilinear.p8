@@ -169,6 +169,6 @@ function _draw()
 	end
 	e += change_by
 	e = wrap(e)
-	rectfill(1,1, 9,7,7)
-	print(stat(7), 2,2, 0)
+	-- rectfill(1,1, 9,7,7)
+	-- print(stat(7), 2,2, 0)
 end
