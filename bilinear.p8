@@ -39,10 +39,20 @@ function make_grid(width, height, f)
 	return grid
 end
 
- function inner(f00, f10, f01, f11, x, y) 
+function inner(f00, f10, f01, f11, x, y) 
 	local un_x = 1.0 - x
 	local un_y = 1.0 - y
 	return (f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y);
+end
+
+function wrap(v)
+	while (v < 0) do
+		v += 1
+	end
+	while (v > 1) do
+		v -= 1
+	end
+	return v
 end
 
 
@@ -59,12 +69,11 @@ function _init()
 		end
 	)
 
-	needs_draw = true
 end
 
-
+change_by = 0.005
 function _update()
-
+	local needs_draw
 	if (btnp(4)) then
 		needs_draw = true
 	end
@@ -72,12 +81,26 @@ function _update()
 	if (btnp(0)) then
 		grid_dim.width-=1
 		grid_dim.height-=1
-		needs_draw = true
-	end
-	if (btnp(1)) then
+		grid_dim.width*=2
+		grid_dim.height*=2
 		grid_dim.width+=1
 		grid_dim.height+=1
 		needs_draw = true
+	end
+	if (btnp(1)) then
+		grid_dim.width-=1
+		grid_dim.height-=1
+		grid_dim.width/=2
+		grid_dim.height/=2
+		grid_dim.width+=1
+		grid_dim.height+=1
+		needs_draw = true
+	end
+	if (btnp(2)) then
+		change_by += 0.001
+	end
+	if (btnp(3)) then
+		change_by -= 0.001
 	end
 
 
@@ -105,39 +128,47 @@ function _update()
 	end
 
 end
-
+e = 0
 function _draw() 
-	if (needs_draw) then
-		needs_draw = false
-		cls()
+	cls()
 
-		local inner_range_row = flr(128/(grid_dim.height-1))-1
-		local inner_range_col = flr(128/(grid_dim.width-1))-1
+	local inner_range_row = flr(32/(grid_dim.height-1))-1
+	local inner_range_col = flr(32/(grid_dim.width-1))-1
 
-		for q_col = 2, grid_dim.width do
-			for q_row= 2, grid_dim.height do
-				local points = {
-					{ grid[q_col-1][q_row-1], grid[q_col-1][q_row] },
-					{ grid[q_col][q_row-1],   grid[q_col][q_row]   }
-				}
-				for col = 0, inner_range_col do
-					for row = 0,inner_range_row do
-						local row_norm = row / inner_range_row
-						local col_norm = col / inner_range_col
-						local v = flr(inner(points[1][1], points[2][1], points[1][2], points[2][2], col_norm, row_norm) * 15)
-						pset((q_col-2) * flr(128/(grid_dim.width-1)) + col,(q_row-2) * flr(128/(grid_dim.height-1)) + row, v)
-					end
+	for q_col = 2, grid_dim.width do
+		for q_row= 2, grid_dim.height do
+			local points = {
+				{ grid[q_col-1][q_row-1], grid[q_col-1][q_row] },
+				{ grid[q_col][q_row-1],   grid[q_col][q_row]   }
+			}
+			for col = 0, inner_range_col do
+				for row = 0,inner_range_row do
+					local row_norm = row / inner_range_row
+					local col_norm = col / inner_range_col
+					local v = inner(points[1][1], points[2][1], points[1][2], points[2][2], col_norm, row_norm)
+					v = round(wrap(v + e) * 15)
+					circfill(
+						(
+							(q_col-2) *
+							inner_range_col +
+							1 +
+							col
+						) * 4,
+						(
+							(q_row-2) *
+							inner_range_row + 
+							1 +
+							row
+						) * 4,
+						1,
+						v
+					)
 				end
 			end
 		end
 	end
-
-	-- for x=0,127 do
-	-- 	for y=0,127 do
-	-- 		pset(x,y,rnd(15))
-	-- 	end
-	-- end
-
+	e += change_by
+	e = wrap(e)
 	rectfill(1,1, 9,7,7)
 	print(stat(7), 2,2, 0)
 end
